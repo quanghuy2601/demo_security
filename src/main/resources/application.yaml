@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: demo_security
+  datasource:
+#    driver-class-name: org.postgresql.Driver
+#   use for coding
+    url: jdbc:postgresql://localhost:5432/demo_security
+#   use for docker deploy
+#    url: jdbc:postgresql://dusty-java-postgresql-data:5432/demo_security
+    username: postgres
+    password: admin
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
