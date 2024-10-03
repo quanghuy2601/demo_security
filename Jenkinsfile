@@ -7,7 +7,7 @@ pipeline {
     }
 
     stages {
-        stage("verify tolling") {
+        stage("Verify tolling") {
             steps {
                 sh '''
                     docker version
@@ -20,7 +20,10 @@ pipeline {
             steps {
                 sh 'docker system prune -a --volumes -f'
             }
-            steps("Start container") {
+
+        }
+        stage("Start container") {
+            steps {
                 sh 'docker compose up -d'
                 sh 'docker compose ps'
             }
