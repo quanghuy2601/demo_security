@@ -9,11 +9,8 @@ pipeline {
     stages {
         stage("Verify tolling") {
             steps {
-                sh '''
-                    docker version
-                    docker info
-                    docker compose version
-                '''
+                sh 'docker --version'
+                sh 'docker info'
             }
         }
         stage("Prune docker data") {
@@ -24,8 +21,7 @@ pipeline {
         }
         stage("Start container") {
             steps {
-                sh 'docker compose up -d'
-                sh 'docker compose ps'
+                sh 'docker compose up --build'
             }
         }
     }
@@ -33,7 +29,6 @@ pipeline {
     post {
         always {
             sh 'docker compose down -v'
-            sh 'docker compose ps'
         }
     }
 }
