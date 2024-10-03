@@ -14,7 +14,7 @@ pipeline {
             steps {
                 withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
                     sh 'docker compose up -d --build'
-                    sh 'docker compose push'  // Ensure your docker-compose.yml is configured for pushing images
+//                     sh 'docker compose push'  // Ensure your docker-compose.yml is configured for pushing images
                 }
             }
         }
