@@ -1,34 +1,35 @@
 pipeline {
+
     agent any
 
-    environment {
-        // Define environment variables here if needed
-        DOCKER_COMPOSE_VERSION = 'docker-compose'
+    parameters {
+        choice(name: 'ACTION', choices: ['Build', 'Remove all'], description: 'Pick something')
     }
-
     stages {
-        stage("Verify tolling") {
+        stage('Building/Deploying') {
+            when{
+                environment name: 'ACTION', value: 'Build'
+            }
             steps {
-                sh 'docker --version'
-                sh 'docker info'
+                withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
+                    sh 'docker compose up --build'
+                    sh 'docker compose push'
+                }
             }
         }
-        stage("Prune docker data") {
-            steps {
-                sh 'docker system prune -a --volumes -f'
+        stage('Removing all') {
+            when{
+                environment name: 'ACTION', value: 'Remove all'
             }
-
-        }
-        stage("Start container") {
             steps {
-                sh 'docker compose up --build'
+                sh 'docker compose down -v '
             }
         }
     }
-
     post {
+        // Clean after build
         always {
-            sh 'docker compose down -v'
+            cleanWs()
         }
     }
 }
