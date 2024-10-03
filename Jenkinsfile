@@ -17,16 +17,7 @@ pipeline {
                 }
             }
         }
-        stage('Removing all') {
-            when{
-                environment name: 'ACTION', value: 'Remove all'
-            }
-            steps {
-                withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                    sh 'docker compose down -v '
-                }
-            }
-        }
+        
     }
     post {
         // Clean after build
