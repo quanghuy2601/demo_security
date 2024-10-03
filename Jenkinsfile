@@ -7,47 +7,30 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
+        stage("verify tolling") {
             steps {
-                // Checkout code from your repository
-                checkout scm
+                sh '''
+                    docker version
+                    docker info
+                    docker compose version
+                '''
             }
         }
-
-        stage('Build Docker Images') {
+        stage("Prune docker data") {
             steps {
-                // Build the images using docker-compose
-                sh 'docker-compose build'
+                sh 'docker system prune -a --volumes -f'
             }
-        }
-
-        stage('Deploy Containers') {
-            steps {
-                // Deploy the containers using docker-compose
-                sh 'docker-compose up -d'
-            }
-        }
-
-        stage('Post-Deploy') {
-            steps {
-                // Any post-deployment steps like clearing cache, database migrations, etc.
-                sh 'docker-compose ps' // Check if containers are running
+            steps("Start container") {
+                sh 'docker compose up -d'
+                sh 'docker compose ps'
             }
         }
     }
 
     post {
         always {
-            // Clean up unused resources after the build
-            sh 'docker system prune -f'
-        }
-
-        success {
-            echo 'Deployment successful!'
-        }
-
-        failure {
-            echo 'Deployment failed.'
+            sh 'docker compose down --remove-orphans -v'
+            sh 'docker compose ps'
         }
     }
 }
