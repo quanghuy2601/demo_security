@@ -1,46 +1,53 @@
 pipeline {
-
     agent any
 
-    parameters {
-        choice(name: 'ACTION', choices: ['Build', 'Remove all'], description: 'Pick something')
+    environment {
+        // Define environment variables here if needed
+        DOCKER_COMPOSE_VERSION = 'docker-compose'
     }
 
     stages {
-        stage('Building/Deploying') {
-            when {
-                environment name: 'ACTION', value: 'Build'
-            }
+        stage('Checkout') {
             steps {
-                withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                    sh 'docker compose up -d --build'
-//                     sh 'docker compose push'  // Ensure your docker-compose.yml is configured for pushing images
-                }
+                // Checkout code from your repository
+                checkout scm
             }
         }
 
-        stage('Removing all') {
-            when {
-                environment name: 'ACTION', value: 'Remove all'
-            }
+        stage('Build Docker Images') {
             steps {
-                sh 'docker compose down -v'
+                // Build the images using docker-compose
+                sh 'docker-compose build'
+            }
+        }
+
+        stage('Deploy Containers') {
+            steps {
+                // Deploy the containers using docker-compose
+                sh 'docker-compose up -d'
+            }
+        }
+
+        stage('Post-Deploy') {
+            steps {
+                // Any post-deployment steps like clearing cache, database migrations, etc.
+                sh 'docker-compose ps' // Check if containers are running
             }
         }
     }
 
     post {
         always {
-            // Clean workspace after build
-            cleanWs()
-        }
-
-        failure {
-            echo 'The pipeline failed!'
+            // Clean up unused resources after the build
+            sh 'docker system prune -f'
         }
 
         success {
-            echo 'The pipeline completed successfully!'
+            echo 'Deployment successful!'
+        }
+
+        failure {
+            echo 'Deployment failed.'
         }
     }
 }
