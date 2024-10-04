@@ -14,7 +14,6 @@ pipeline {
             steps {
                 withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
                     sh 'docker compose up -d --build'
-                    sh 'docker compose push'
                 }
             }
         }

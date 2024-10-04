@@ -4,5 +4,5 @@ COPY . .
 RUN mvn clean package
 
 FROM eclipse-temurin:21-jdk
-#COPY --from=build /app/target/app.jar app.jar
-ENTRYPOINT ["java", "-jar", "/app/target/app.jar"]
+COPY --from=build /app/target/demo_security-0.0.1-SNAPSHOT.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
