@@ -31,7 +31,7 @@ services:
       dockerfile: ./Dockerfile
     image: dusty/demo_security
     ports:
-      - "8081:8080"
+      - "8081:8081"
     depends_on:
       postgres:
         condition: service_healthy
