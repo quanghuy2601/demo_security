@@ -1,4 +1,4 @@
-version: '3.9'
+name: spring-postgres-compose
 
 services:
 
@@ -9,27 +9,27 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: demo_security
-      PGDATA: /var/lib/postgresql/data/pgdata
+      PGDATA: /data/postgres/pgdata
     ports:
       - "5432:5432"
     volumes:
-      - dusty-java-postgresql-data:/var/lib/postgresql/data
-    restart: unless-stopped  #  always
+      - dusty-java-postgresql-data:/data/postgres
+    restart: always  #   unless-stopped
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 10s
-      retries: 5
+      interval: 30s
+      retries: 10
     networks:
       - dev-backend
 
   backend:
-    container_name: dusty-demo_security
+    container_name: demo_security
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/demo_security
     build:
       context: .
       dockerfile: ./Dockerfile
-    image: dusty/demo_security
+    image: demo_security
     ports:
       - "8081:8080"
     depends_on:
