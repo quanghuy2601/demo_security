@@ -14,7 +14,7 @@ services:
       - "5432:5432"
     volumes:
       - dusty-java-postgresql-data:/var/lib/postgresql/data
-    restart: always  # unless-stopped
+    restart: unless-stopped  #  always
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
